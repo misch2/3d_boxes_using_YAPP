@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------
 // Yet Another Parameterized Projectbox generator
 //
-//  This is a box for BME 280 sensor board with inline connector
+//  This is a box for <template>
 //
 //  Version 1.6 (06-10-2022)
 //
@@ -15,6 +15,15 @@
 //
 //-----------------------------------------------------------------------
 
+// FIXME piny jsou prilis daleko od sebe (1-2mm?)
+// FIXME USB otvor je prilis maly pro kabel
+
+
+// need to declare variables first
+holeOffsetLength = 0;
+holeOffsetWidth = 0;
+holesDistanceLength = 0;
+holesDistanceWidth = 0;
 
 include <./library/YAPPgenerator_v16.scad>
 
@@ -43,40 +52,52 @@ include <./library/YAPPgenerator_v16.scad>
                                  LEFT
 */
 
+// OK
 printBaseShell      = true;
 printLidShell       = true;
 
 // Edit these parameters for your own board dimensions
+// OK
 wallThickness       = 2.0;
 basePlaneThickness  = 2.0;
 lidPlaneThickness   = 2.0;
 
 //-- total height inside  = baseWallHeight + lidWallHeight 
-baseWallHeight      = 5;
-lidWallHeight       = 5;
+// OK
+baseWallHeight      = 15;
+lidWallHeight       = 15;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-ridgeHeight         = 3.5;
+// OK
+ridgeHeight         = 4;
 ridgeSlack          = 0.2;
 roundRadius         = 2.0;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-standoffHeight      = 2.0;        // 2mm reserve is perfectly OK
+// OK
+standoffHeight      = 5.0;        // PCB needs 3mm, + 2mm reserve
 pinDiameter         = 3.0 - 0.2;  // 3mm hole in the PCB - .2mm slack
 pinHoleSlack        = 0.3;
-standoffDiameter    = 5;    // larger than the holes, to support the PCB
+standoffDiameter    = 5;    // larger than the holes, to support the PCV
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
-pcbLength           = 30;
-pcbWidth            = 15;
-pcbThickness        = 1.6;
+// OK
+pcbLength           = 55;
+pcbWidth            = 28;
+pcbThickness        = 1.5;
+
+holeOffsetLength    = 2.0;     // vzdalenost stredu otvoru od kraje (podel)
+holeOffsetWidth     = 2.3;      // vzdalenost stredu otvoru od kraje (nasir)
+holesDistanceLength = 51;   // vzdalenost mezi otvory podel delsi strany
+holesDistanceWidth  = 23.5;  // vzdalenost mezi otvory podel kratsi strany
                             
 // padding between pcb and inside wall
+// OK
 paddingFront        = 5;
-paddingBack         = 15;
+paddingBack         = 2;
 paddingRight        = 5;
 paddingLeft         = 5;
 
@@ -95,18 +116,18 @@ inspectX            = 0;  // 0=none, >0 from front, <0 from back
 inspectY            = 0;  // 0=none, >0 from left, <0 from right
 
 
-// pcbStands fixate the PCB between the base and the lid.
 //-- pcb_standoffs  -- origin is pcb[0,0,0]
 // (0) = posx
 // (1) = posy
 // (2) = { yappBoth | yappLidOnly | yappBaseOnly }
 // (3) = { yappHole, YappPin }
 pcbStands = [
-//                [pcbLength-12,  2.4, yappBaseOnly, yappHole] 
-//               ,[pcbLength-12,  pcbWidth-2.4, yappBaseOnly, yappHole] 
-                [pcbLength-2.4,  2.4, yappBoth, yappPin] 
-               ,[pcbLength-2.4,  pcbWidth-2.4, yappBoth, yappPin] 
+               [holeOffsetLength,  holeOffsetWidth, yappBoth, yappPin],
+               [holeOffsetLength,  holeOffsetWidth + holesDistanceWidth, yappBoth, yappPin],
+               [holeOffsetLength + holesDistanceLength, holeOffsetWidth, yappBoth, yappPin],
+               [holeOffsetLength + holesDistanceLength, holeOffsetWidth + holesDistanceWidth, yappBoth, yappPin] 
              ];     
+
 
 //-- Lid plane    -- origin is pcb[0,0,0]
 // (0) = posx
@@ -152,7 +173,7 @@ cutoutsFront =  [
 //                    [0, 5, 10, 15, 0, yappRectangle]               // org
 //                 ,  [25, 3, 10, 10, 0, yappRectangle, yappCenter]  // center
 //                 ,  [60, 10, 15, 6, 0, yappCircle]                 // circle
-//                    [(pcbWidth - 20)/2, -1, 20, 4, 0, yappRectangle ]    // data cables to sensor
+                    [(pcbWidth - 20)/2, -1, 20, 3.5, 0, yappRectangle ]    // data cables to sensor
                 ];
 
 //-- back plane  -- origin is pcb[0,0,0]
@@ -167,8 +188,7 @@ cutoutsBack =   [
 //                    [0, 0, 10, 8, 0, yappRectangle]                // org
 //                  , [25, 18, 10, 6, 0, yappRectangle, yappCenter]  // center
 //                  , [50, 0, 8, 8, 0, yappCircle]                   // circle
-  //                  [13, -(1.25 + 3/2), 10, 5, 0, yappRectangle, yappCenter] // microUSB connector
-                      [(pcbWidth - 20)/2, -2, 20, 4, 0, yappRectangle ]    // data cables to sensor
+                    [13, -(1.25 + 3/2), 13, 7.5, 0, yappRectangle, yappCenter] // microUSB connector - fixed, larger hole
                 ];
 
 //-- left plane   -- origin is pcb[0,0,0]
@@ -216,12 +236,12 @@ cutoutsGrill = [
 //                ,[45,  0, 50, 10, 2, 3, 45, "lid"]
                 //,[15, 85, 50, 10, 2, 3,  20, "base"]
                 //,[85, 15, 10, 50, 2, 3,  45, "lid"]
-            [ -10,  -2, 19,  32, 2, 2, 45, "base" ],
-            [ -10,  -2, 19,  32, 2, 2, 45, "lid" ],
+            // [ 13,  2, 22,  22, 2, 2, 45, "base" ],
+            [ standoffDiameter * 1.5,  0, pcbWidth, pcbLength - standoffDiameter * 3, 2, 2, 45, "base" ],
+            [ standoffDiameter * 1.5,  0, pcbWidth, pcbLength - standoffDiameter * 3, 2, 2, 45, "lid" ],
             //[ 5,  7, 12,  40, 2, 2, 45, "lid" ],
                ];
 
-// Connectors between Base and Lid (not touching the PCB). For holding the Base and the Lid together if needed.
 //-- connectors -- origen = box[0,0,0]
 // (0) = posx
 // (1) = posy
@@ -233,9 +253,7 @@ connectors   =  [
 //                    [8, 8, 2.5, 3.8, 5, yappAllCorners]
 //                  , [30, 8, 5, 5, 5]
                 ];
-  
-
-// ConnectorsPCB between Base and Lid that fixates the PCB. Larger than pcbStands (to fit screws in) but with a space between them for PCB.
+                
 //-- connectorsPCB -- origin = pcb[0,0,0]
 //-- a connector that allows to screw base and lid together through holes in the PCB
 // (0) = posx
@@ -249,8 +267,6 @@ connectorsPCB   =  [
 //                   ,[pcbLength/2, pcbWidth-10, 2.5, 3.8, 5]
                 ];
 
-
-// SnapJoins keep the Base and Lid together.
 //-- snap Joins -- origen = box[x0,y0]
 // (0) = posx | posy
 // (1) = width

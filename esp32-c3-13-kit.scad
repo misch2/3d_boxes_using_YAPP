@@ -15,6 +15,8 @@
 //
 //-----------------------------------------------------------------------
 
+// FIXME piny jsou prilis daleko od sebe (1-2mm?)
+// FIXME USB otvor je prilis maly pro kabel
 
 include <./library/YAPPgenerator_v16.scad>
 
