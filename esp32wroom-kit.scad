@@ -15,10 +15,6 @@
 //
 //-----------------------------------------------------------------------
 
-// FIXME piny jsou prilis daleko od sebe (1-2mm?)
-// FIXME USB otvor je prilis maly pro kabel
-
-
 // need to declare variables first
 holeOffsetLength = 0;
 holeOffsetWidth = 0;
@@ -57,49 +53,43 @@ printBaseShell      = true;
 printLidShell       = true;
 
 // Edit these parameters for your own board dimensions
-// OK
 wallThickness       = 2.0;
 basePlaneThickness  = 2.0;
 lidPlaneThickness   = 2.0;
 
 //-- total height inside  = baseWallHeight + lidWallHeight 
-// OK
-baseWallHeight      = 15;
-lidWallHeight       = 15;
+baseWallHeight      = 8;
+lidWallHeight       = 4;
 
 // ridge where base and lid off box can overlap
 // Make sure this isn't less than lidWallHeight
-// OK
 ridgeHeight         = 4;
 ridgeSlack          = 0.2;
 roundRadius         = 2.0;
 
 // How much the PCB needs to be raised from the base
 // to leave room for solderings and whatnot
-// OK
-standoffHeight      = 5.0;        // PCB needs 3mm, + 2mm reserve
+standoffHeight      = 4.0;        // PCB components need 3mm, + 1mm reserve
 pinDiameter         = 3.0 - 0.2;  // 3mm hole in the PCB - .2mm slack
 pinHoleSlack        = 0.3;
 standoffDiameter    = 5;    // larger than the holes, to support the PCV
 
 // Total height of box = basePlaneThickness + lidPlaneThickness 
 //                     + baseWallHeight + lidWallHeight
-// OK
 pcbLength           = 55;
 pcbWidth            = 28;
 pcbThickness        = 1.5;
 
-holeOffsetLength    = 2.0;     // vzdalenost stredu otvoru od kraje (podel)
-holeOffsetWidth     = 2.3;      // vzdalenost stredu otvoru od kraje (nasir)
-holesDistanceLength = 51;   // vzdalenost mezi otvory podel delsi strany
-holesDistanceWidth  = 23.5;  // vzdalenost mezi otvory podel kratsi strany
+holeOffsetLength    = 2.0;   // vzdalenost stredu otvoru od kraje (podel)
+holeOffsetWidth     = 2.0;   // vzdalenost stredu otvoru od kraje (nasir)
+holesDistanceLength = (48.2 + 53.7) / 2;    // vzdalenost mezi otvory podel delsi strany
+holesDistanceWidth  = (20.7 + 26.2) / 2;  // vzdalenost mezi otvory podel kratsi strany
                             
 // padding between pcb and inside wall
-// OK
 paddingFront        = 5;
-paddingBack         = 2;
-paddingRight        = 5;
-paddingLeft         = 5;
+paddingBack         = 3;
+paddingRight        = 3;
+paddingLeft         = 3;
 
 
 //-- D E B U G -------------------
@@ -137,13 +127,7 @@ pcbStands = [
 // (4) = angle
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
-cutoutsLid =  [
-               //     [20, 20, 10, 20, 10, yappRectangle]  
-               //   , [20, 50, 10, 20, 0, yappRectangle, yappCenter]
-               //   , [50, 50, 10, 2, 0, yappCircle]
-               //   , [pcbLength-10, 20, 15, 0, 0, yappCircle] 
-               //   , [50, pcbWidth, 5, 7, 0, yappRectangle, yappCenter]
-              ];
+cutoutsLid = [];
 
 //-- base plane    -- origin is pcb[0,0,0]
 // (0) = posx
@@ -153,12 +137,7 @@ cutoutsLid =  [
 // (4) = angle
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
-cutoutsBase =   [
-                 //   [10, 10, 20, 10, 45, yappRectangle]
-                 // , [30, 10, 15, 10, 45, yappRectangle, yappCenter]
-                 // , [20, pcbWidth-20, 15, 0, 0, yappCircle]
-                 // , [pcbLength-15, 5, 10, 2, 0, yappCircle]
-                ];
+cutoutsBase = [];
 
 //-- front plane  -- origin is pcb[0,0,0]
 // (0) = posy
@@ -168,13 +147,9 @@ cutoutsBase =   [
 // (4) = angle
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
-
 cutoutsFront =  [
-//                    [0, 5, 10, 15, 0, yappRectangle]               // org
-//                 ,  [25, 3, 10, 10, 0, yappRectangle, yappCenter]  // center
-//                 ,  [60, 10, 15, 6, 0, yappCircle]                 // circle
-                    [(pcbWidth - 20)/2, -1, 20, 3.5, 0, yappRectangle ]    // data cables to sensor
-                ];
+  [ (pcbWidth - 18)/2, -1, 18, 4, 0, yappRectangle ]    // data cables to sensor
+];
 
 //-- back plane  -- origin is pcb[0,0,0]
 // (0) = posy
@@ -185,11 +160,8 @@ cutoutsFront =  [
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
 cutoutsBack =   [
-//                    [0, 0, 10, 8, 0, yappRectangle]                // org
-//                  , [25, 18, 10, 6, 0, yappRectangle, yappCenter]  // center
-//                  , [50, 0, 8, 8, 0, yappCircle]                   // circle
-                    [13, -(1.25 + 3/2), 13, 7.5, 0, yappRectangle, yappCenter] // microUSB connector - fixed, larger hole
-                ];
+  [ 13, -(1.25 + 3/2), 11 + 2, 7 + 2, 0, yappRectangle, yappCenter] // microUSB connector
+];
 
 //-- left plane   -- origin is pcb[0,0,0]
 // (0) = posx
@@ -199,11 +171,7 @@ cutoutsBack =   [
 // (4) = angle
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
-cutoutsLeft =   [
-//                    [25, 0, 6, 20, 0, yappRectangle]                       // org
-//                  , [pcbLength-35, 0, 20, 6, 0, yappRectangle, yappCenter] // center
-//                  , [pcbLength/2, 10, 20, 6, 0, yappCircle]                // circle
-                ];
+cutoutsLeft = [];
 
 //-- right plane   -- origin is pcb[0,0,0]
 // (0) = posx
@@ -213,11 +181,7 @@ cutoutsLeft =   [
 // (4) = angle
 // (5) = { yappRectangle | yappCircle }
 // (6) = { yappCenter }
-cutoutsRight =  [
-//                    [10, 0, 9, 5, 0, yappRectangle]                // org
-//                  , [40, 0, 9, 5, 0, yappRectangle, yappCenter]    // center
-//                  , [60, 0, 9, 5, 0, yappCircle]                   // circle
-                ];
+cutoutsRight = [];
 
 //-- cutoutGrills    -- origin is pcb[x0,y0, zx]
 // (0) = xPos
@@ -231,16 +195,9 @@ cutoutsRight =  [
 // (8) = {polygon points}}
 
 cutoutsGrill = [
-//                 [35,  8, 70, 70, 2, 3, 50, "base" ]
-//                ,[ 0, 20, 10, 40, 2, 3, 50, "lid"]
-//                ,[45,  0, 50, 10, 2, 3, 45, "lid"]
-                //,[15, 85, 50, 10, 2, 3,  20, "base"]
-                //,[85, 15, 10, 50, 2, 3,  45, "lid"]
-            // [ 13,  2, 22,  22, 2, 2, 45, "base" ],
-            [ standoffDiameter * 1.5,  0, pcbWidth, pcbLength - standoffDiameter * 3, 2, 2, 45, "base" ],
-            [ standoffDiameter * 1.5,  0, pcbWidth, pcbLength - standoffDiameter * 3, 2, 2, 45, "lid" ],
-            //[ 5,  7, 12,  40, 2, 2, 45, "lid" ],
-               ];
+  [ standoffDiameter * 1.5,  0, pcbWidth, pcbLength - standoffDiameter * 3, 2, 2, 45, "base" ],
+  [ standoffDiameter * 1.5,  0, pcbWidth, pcbLength - standoffDiameter * 3, 2, 2, 45, "lid" ],
+];
 
 //-- connectors -- origen = box[0,0,0]
 // (0) = posx
@@ -249,10 +206,7 @@ cutoutsGrill = [
 // (3) = insertDiameter
 // (4) = outsideDiameter
 // (5) = { yappAllCorners }
-connectors   =  [
-//                    [8, 8, 2.5, 3.8, 5, yappAllCorners]
-//                  , [30, 8, 5, 5, 5]
-                ];
+connectors = [];
                 
 //-- connectorsPCB -- origin = pcb[0,0,0]
 //-- a connector that allows to screw base and lid together through holes in the PCB
@@ -262,23 +216,16 @@ connectors   =  [
 // (3) = insertDiameter
 // (4) = outsideDiameter
 // (5) = { yappAllCorners }
-connectorsPCB   =  [
-//                    [pcbLength/2, 10, 2.5, 3.8, 5]
-//                   ,[pcbLength/2, pcbWidth-10, 2.5, 3.8, 5]
-                ];
+connectorsPCB = [];
 
 //-- snap Joins -- origen = box[x0,y0]
 // (0) = posx | posy
 // (1) = width
 // (2..5) = yappLeft / yappRight / yappFront / yappBack (one or more)
 // (n) = { yappSymmetric }
-snapJoins   =     [
-                    [2, 10, yappLeft, yappRight, yappSymmetric]
-              //    [5, 10, yappLeft]
-              //  , [shellLength-2, 10, yappLeft]
-//                  , [30,  10, yappFront, yappBack]
-              //  , [2.5, 3, 5, yappBack, yappFront, yappSymmetric]
-                ];
+snapJoins = [
+  [2, 10, yappLeft, yappRight, yappSymmetric]
+];
                
 //-- origin of labels is box [0,0,0]
 // (0) = posx
